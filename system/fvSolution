@@ -1,0 +1,161 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "pcorr.*"
+    {
+        solver           GAMG;
+        //preconditioner   DIC;
+        tolerance        1e-8;
+        relTol           0.01;
+        smoother         GaussSeidel;
+        maxIter          50;
+    }
+
+    p
+    {
+        $pcorr;
+        tolerance        1e-8;
+        relTol           0.01;
+        minIter          5;
+        maxIter          200;
+    }
+
+    pFinal
+    {
+        $p;
+        tolerance        1e-8;
+        relTol           0;
+        maxIter          200;
+    }
+
+    "(U|k|omega|nut|nuTilda)"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        nSweeps         2;
+        tolerance       1e-08;
+        relTol          0.01;
+        minIter         5;
+    }
+
+    "(U|k|omega|nut|nuTilda)Final"
+    {
+        $U;
+        tolerance       1e-06;
+        relTol          0;
+    }
+
+    cellDisplacement
+    {
+        solver          GAMG;
+        tolerance       1e-6;
+        relTol          0;
+        smoother        GaussSeidel;
+    }
+
+    cellDisplacementFinal
+    {
+        $cellDisplacement;
+        tolerance       1e-6;
+        relTol          0;
+    }
+}
+
+PIMPLE
+{
+	momentumPredictor 	yes;
+    correctPhi          yes;
+    nOuterCorrectors    1;
+    nCorrectors         3;
+    nNonOrthogonalCorrectors 2;
+
+    outerCorrectorResidualControl
+    {
+        //- Weak control - bad accuracy but faster
+        p
+        {
+            relTol      0;
+            tolerance   1e-6;
+        }
+
+        U
+        {
+            relTol      0;
+            tolerance   1e-6;
+        }
+
+        "(k|omega)"
+        {
+            relTol      0;
+            tolerance   1e-6;
+        }
+    }
+}
+
+SIMPLE
+{
+    nCorrectors              3;
+    nNonOrthogonalCorrectors 2;
+
+    residualControl
+    {
+        p               1e-5;
+        U               1e-5;
+        nuTilda         1e-5;
+        k               1e-5;
+        //omega           1e-5;
+    }
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p               0.3;
+    }
+    equations
+    {
+        U               0.7;
+        p               0.7;
+        nuTilda         0.7;
+        k               0.7;
+        omega           0.7;
+    }
+}
+
+/*relaxationFactors
+{
+    fields
+    {
+        p               0.3;
+        pFinal          0.3;
+    }
+    equations
+    {
+        "(U|k|omega|nut|nuTilda)"   0.7;
+        "(U|k|omega|nut|nuTilda)Final" 0.3;
+    }
+}*/   
+
+cache
+{
+    //grad(U);
+}
+
+
+// ************************************************************************* //

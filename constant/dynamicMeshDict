@@ -1,0 +1,60 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |				
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  9                                   	
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+	version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Deforming Mesh
+
+dynamicFvMesh      dynamicMotionSolverFvMesh;
+
+motionSolverLibs   ("libfvMotionSolvers.so");
+
+solver       displacementLaplacian;
+
+
+displacementLaplacianCoeffs 
+{
+    diffusivity          quadratic inverseDistance (trailingEdge) ;			          
+}
+
+
+// Aadaptive Mesh Refinement
+
+/*dynamicFvMesh      dynamicRefineFvMesh;
+
+motionSolverLibs   ("libfvMotionSolvers.so");
+
+solver             displacementLaplacian;
+
+
+displacementLaplacianCoeffs 
+{
+    diffusivity          quadratic inverseDistance (trailingEdge);			          
+}
+
+dynamicRefineFvMeshCoeffs
+{
+    refineInterval      1;                 // Time steps between refinement
+    field               p;                          // Field to base refinement on (e.g., velocity)
+    lowerRefineLevel    50;
+    upperRefineLevel    200;
+    unrefineLevel       10;                  // Unrefine if refinement drops below this level
+    nBufferLayers       4;                  // Buffer layers around refined regions
+    maxRefinement       4;                  // Maximum refinement level
+    maxCells            2000000;                  // Maximum total number of cells
+    correctFluxes       ();                  // Fields to correct after refinement
+    dumpLevel           false;                  // Write refinement level as a field
+}*/
+
+// ************************************************************************* //

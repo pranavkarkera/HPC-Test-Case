@@ -1,0 +1,90 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      cellDisplacement;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 0 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    trailingEdge
+    {
+        
+         type                 groovyBC;
+         value                uniform (0 0 0);
+        valueExpression       "toFace(pointDisplacement)";
+
+		/*type 		waveDisplacement;  // Specify motion 
+		value uniform (0 0 0);  	   // Initial displacement
+		amplitude	  (0 0.025 0);
+		omega 		  1;
+		waveNumber    (2 0 0);
+		startRamp
+         {
+             type            linearRamp;
+             duration        1;
+             start           1;
+         }
+         endRamp
+         {
+             type            linearRamp;
+             duration        1;
+             start           1;
+         }
+         timeRamp
+         {
+             type            linearRamp;
+             duration        1;
+         }*/
+        /*
+
+        // Motion specification
+        scale (0 0.01 0);  // Amplitude of motion
+        function
+        {
+            type sine;             // Sinusoidal motion
+            amplitude (0 0.01 0);  // Motion amplitude
+            frequency 5;           // Frequency of motion (Hz)
+            phase 0;               // Phase shift (radians)
+        }*/
+    }
+    
+    airfoil
+    {
+        type 			fixedValue;
+        value uniform (0 0 0);  // No motion
+    }
+    
+
+    front
+    {
+        type            empty;
+    }
+
+    back
+    {
+        type            empty;
+    }
+
+    ".*"
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+}
+
+
+// ************************************************************************* //
